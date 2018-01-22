@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Products list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Biddingstart</th>
+                <th>Biddingend</th>
+                <th>Bidminimum</th>
+                <th>Minimumprice</th>
+                <th>Immediateprice</th>
+                <th>Productvisits</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td><a href="{{ path('product_show', { 'id': product.id }) }}">{{ product.id }}</a></td>
+                <td>{{ product.title }}</td>
+                <td>{{ product.description }}</td>
+                <td>{% if product.biddingStart %}{{ product.biddingStart|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if product.biddingEnd %}{{ product.biddingEnd|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ product.bidMinimum }}</td>
+                <td>{{ product.minimumPrice }}</td>
+                <td>{{ product.immediatePrice }}</td>
+                <td>{{ product.productVisits }}</td>
+                <td>{% if product.created %}{{ product.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if product.updated %}{{ product.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('product_show', { 'id': product.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('product_edit', { 'id': product.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('product_new') }}">Create a new product</a>
+        </li>
+    </ul>
+{% endblock %}
