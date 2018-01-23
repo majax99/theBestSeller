@@ -6,17 +6,20 @@
             {% for product in products %}
             <div class="col-md-4 ">
                 <div class="thumbnail ">
+                    {% set i = 0 %}
                     {% for image in product.images %}
-                        <img src="{{ vich_uploader_asset(image, 'imageFile') }}" alt="{{ image.name }}" class="img-responsive">
+                    {% if i == 0 %}
+                        <img src="{{ vich_uploader_asset(image, 'imageFile')| imagine_filter('my_thumb') }}" alt="{{ image.name }}" class="img-responsive" >
+                    {% endif %}
+                        {% set i = i+1 %}
                     {% endfor %}
                     <div class="caption">
                         <h4 class="pull-right">${{ product.minimumPrice }}</h4>
                         <h4><a href="#">{{ product.title }}</a></h4>
-                        <p>{{ product.description }}</p>
                     </div>
                     <div class="space-ten"></div>
                     <div class="btn-ground text-center">
-                        <a href="{{ path('product_show', {'id': product.id}) }}"><button type="button" class="btn btn-primary" >more details</button></a>
+                        <a href="{{ path('ordershow', {'id': product.id}) }}"><button type="button" class="btn btn-primary" >more details</button></a>
                     </div>
                     <div class="space-ten"></div>
                 </div>

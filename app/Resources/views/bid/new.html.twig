@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class = "container">
+        <div class="row">
+            {# Condition pour récupérer le bid final #}
+            {% if (products[0].bids[1]) %}
+            {% if (products[0].bids[0].bidAccount > products[0].bids[1].bidAccount and products[0].bids[0].bidAccount > products[0].bids[1].bidAccount + products[0].bidMinimum ) %}
+                {% set bid = products[0].bids[1].bidAccount + products[0].bidMinimum %}
+            {% elseif (products[0].bids[0].bidAccount > products[0].bids[1].bidAccount and products[0].bids[0].bidAccount <= products[0].bids[1].bidAccount + products[0].bidMinimum ) %}
+                {% set bid = products[0].bids[0].bidAccount %}
+            {% elseif (products[0].bids[0].bidAccount == products[0].bids[1].bidAccount  ) %}
+                {% set bid = products[0].bids[0].bidAccount %}
+            {% endif %}
+            {% else %}
+            {% if (products[0].bids[0]) %}
+                {% set bid = products[0].bids[0].bidAccount %}
+            {% else %}
+                {% set bid = products[0].minimumPrice %}
+            {% endif %}
+            {% endif %}
+                {% for product in products %}
+                    {% set i = 0 %}
+                    {% if i == 0 %}
+            <div class="col-md-offset-1 col-md-6 product_content">
+                <h2>{{ product.title }}</h2>
+                <p>{{ product.description }}</p>
+                <h3 class="cost" >Actual bid : <span class="glyphicon glyphicon-usd"></span> {{ bid }} <small class="pre-cost"> by <strong>{{ products[0].bids[0].buyer.username }}</strong></small></h3>
+                <h4> End of bid : <span id="countdown">  </span></h4>
+                <h3 class="cost" >Immediate price : <span class="glyphicon glyphicon-usd"></span> {{ product.immediatePrice }} </h3>
+                <div class="space-ten"></div>
+                <div class="btn-ground">
+                    <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-usd"></span> Immediate order</button>
+                </div>
+                <span id="EndBid">{{ product.biddingEnd|date('Y-m-d H:i:s') }}</span>
+                {% set minBid = bid + products[0].bidMinimum%}
+                <span id="minBid">{{ minBid }}</span>
+
+            </div>
+        {%  endif %}
+        {% set i = i + 1 %}
+
+                {% endfor %}
+<h3>Make a bid</h3>
+            {{ form_start(form) }}
+            <div class = "col-md-2">
+                {{ form_widget(form) }}
+                <input type="submit" value="Submit the bid" class = "btn btn-success" id="submitForm" onclick="continueOrNot()"/>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+
+
+    <script>
+
+        function checkValue(value) {
+            var minBid = parseInt(document.getElementById("minBid").innerHTML);
+            console.log(minBid);
+            if (value < minBid)
+                return false;
+            else
+                return true;
+        }
+
+
+        function continueOrNot() {
+            if(checkValue(document.getElementById('appbundle_bid_bidAccount').value)){
+                alert('valid'); return true;
+            }else
+                { alert("value is not valid"); return false;}
+        }
+        document.getElementById("minBid").style.display = 'none';
+
+        document.getElementById("EndBid").style.display = 'none';
+        var countDownDatePHP = document.getElementById("EndBid").innerHTML;
+        YearBid = countDownDatePHP.substr(0,4);
+        MonthBid = countDownDatePHP.substr(5,2);
+        DayBid = countDownDatePHP.substr(8,2);
+        HourBid = countDownDatePHP.substr(11,2);
+        MinBid = countDownDatePHP.substr(14,2);
+        SecBid = countDownDatePHP.substr(17,2);
+        countDownDate = new Date(YearBid, MonthBid - 1,DayBid, HourBid, MinBid,SecBid).getTime();
+
+        // Set the date we're counting down to
+        //var countDownDate2 = new Date("Sep 5, 2018 15:37:25").getTime();
+
+        // Update the count down every 1 second
+        var x = setInterval(function() {
+
+            // Get todays date and time
+            var now = new Date().getTime();
+            // Find the distance between now an the count down date
+            var distance = countDownDate - now;
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="demo"
+            document.getElementById("countdown").innerHTML = days + " Days " + hours + "h "
+                + minutes + "m " + seconds + "s ";
+
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown").innerHTML = "EXPIRED";
+            }
+        }, 1000);
+
+
+
+
+    </script>
+
+{% endblock %}
+
+

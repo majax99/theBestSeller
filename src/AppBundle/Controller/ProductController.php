@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Bid;
+use AppBundle\Entity\Order;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -41,6 +43,7 @@ class ProductController extends Controller
     public function newAction(Request $request)
     {
         $product = new Product();
+
         $form = $this->createForm('AppBundle\Form\ProductType', $product);
         $form->handleRequest($request);
 
@@ -73,6 +76,37 @@ class ProductController extends Controller
             'delete_form' => $deleteForm->createView(),
         ));
     }
+
+    /**
+     * Finds and displays a product entity.
+     *
+     * @Route("/{id}/bid/new", name="productBid_show")
+     * @Method({"GET", "POST"})
+     */
+    public function newBidAction(Request $request, Product $product)
+    {
+
+        $bid = new Bid();
+        $bid->setProduct($product);
+        $bid->setBuyer($this->getUser());
+
+        $form = $this->createForm('AppBundle\Form\BidType', $bid);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($bid);
+            $em->flush();
+
+            return $this->redirectToRoute('product_show', array('id' => $product->getId()));
+        }
+
+        return $this->render('product/new.html.twig', array(
+            'bid' => $bid,
+            'form' => $form->createView(),
+        ));
+    }
+
 
     /**
      * Displays a form to edit an existing product entity.

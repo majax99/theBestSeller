@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Product
@@ -18,6 +19,11 @@ class Product
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Image", mappedBy="product")
      */
     private $images;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bid", mappedBy="product")
+     */
+    private $bids;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category")
@@ -91,7 +97,7 @@ class Product
     /**
      * @var float
      *
-     * @ORM\Column(name="immediatePrice", type="float")
+     * @ORM\Column(name="immediatePrice", type="float",nullable=true)
      */
     private $immediatePrice;
 
@@ -124,6 +130,7 @@ class Product
     {
         $this->biddingStart = new \DateTime();
         $this->images = new ArrayCollection();
+        $this->bids = new ArrayCollection();
     }
 
     /**
@@ -463,5 +470,41 @@ class Product
     public function getImages()
     {
         return $this->images;
+    }
+
+    /**
+     * Add bid.
+     *
+     * @param \AppBundle\Entity\Bid $bid
+     *
+     * @return Product
+     */
+    public function addBid(\AppBundle\Entity\Bid $bid)
+    {
+        $this->bids[] = $bid;
+
+        return $this;
+    }
+
+    /**
+     * Remove bid.
+     *
+     * @param \AppBundle\Entity\Bid $bid
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeBid(\AppBundle\Entity\Bid $bid)
+    {
+        return $this->bids->removeElement($bid);
+    }
+
+    /**
+     * Get bids.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBids()
+    {
+        return $this->bids;
     }
 }

@@ -13,6 +13,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Bid
 {
+
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="bids")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     */
+    private $product;
+
     /**
      * @var int
      *
@@ -22,11 +30,7 @@ class Bid
      */
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $product;
+
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
@@ -37,9 +41,9 @@ class Bid
     /**
      * @var float
      *
-     * @ORM\Column(name="bid", type="float")
+     * @ORM\Column(name="bidAccount", type="float")
      */
-    private $bid;
+    private $bidAccount;
 
 
     /**
@@ -67,30 +71,6 @@ class Bid
      * @ORM\Column(type="datetime")
      */
     private $updated;
-
-    /**
-     * Set bid.
-     *
-     * @param float $bid
-     *
-     * @return Bid
-     */
-    public function setBid($bid)
-    {
-        $this->bid = $bid;
-
-        return $this;
-    }
-
-    /**
-     * Get bid.
-     *
-     * @return float
-     */
-    public function getBid()
-    {
-        return $this->bid;
-    }
 
     /**
      * Set created.
@@ -162,5 +142,58 @@ class Bid
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * Set buyer.
+     *
+     * @param \AppBundle\Entity\User $buyer
+     *
+     * @return Bid
+     */
+    public function setBuyer(\AppBundle\Entity\User $buyer)
+    {
+        $this->buyer = $buyer;
+
+        return $this;
+    }
+
+    /**
+     * Get buyer.
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getBuyer()
+    {
+        return $this->buyer;
+    }
+
+    public function __toString()
+    {
+        return $this->getBidAccount();
+    }
+
+    /**
+     * Set bidAccount.
+     *
+     * @param float $bidAccount
+     *
+     * @return Bid
+     */
+    public function setBidAccount($bidAccount)
+    {
+        $this->bidAccount = $bidAccount;
+
+        return $this;
+    }
+
+    /**
+     * Get bidAccount.
+     *
+     * @return float
+     */
+    public function getBidAccount()
+    {
+        return $this->bidAccount;
     }
 }

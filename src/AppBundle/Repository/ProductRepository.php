@@ -20,4 +20,48 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->getResult()
             ;
     }
+
+    public function myFindOne($id)
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.images', 'i')
+            ->addSelect('i')
+            ->where('p.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function myFindOneBids($id)
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.bids', 'b')
+            ->addSelect('b')
+            ->where('p.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function myFindBidMax($id)
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.bids', 'b')
+            ->addSelect('b')
+            ->where('p.id = :id')
+            ->setParameter('id', $id)
+            ->orderBy('b.bidAccount', 'DESC','b.created', 'ASC')
+            //->orderBy('b.created', 'ASC')
+            ->setFirstResult( 0 )
+            ->setMaxResults( 2 )
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 }

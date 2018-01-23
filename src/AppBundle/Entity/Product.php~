@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Product
@@ -18,6 +19,11 @@ class Product
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Image", mappedBy="product")
      */
     private $images;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bid", mappedBy="bid")
+     */
+    private $bids;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category")
@@ -91,7 +97,7 @@ class Product
     /**
      * @var float
      *
-     * @ORM\Column(name="immediatePrice", type="float")
+     * @ORM\Column(name="immediatePrice", type="float",nullable=true)
      */
     private $immediatePrice;
 
@@ -123,6 +129,8 @@ class Product
     public function __construct()
     {
         $this->biddingStart = new \DateTime();
+        $this->images = new ArrayCollection();
+        $this->bids = new ArrayCollection();
     }
 
     /**
@@ -426,5 +434,41 @@ class Product
     public function getImmediatePrice()
     {
         return $this->immediatePrice;
+    }
+
+    /**
+     * Add image.
+     *
+     * @param \AppBundle\Entity\Image $image
+     *
+     * @return Product
+     */
+    public function addImage(\AppBundle\Entity\Image $image)
+    {
+        $this->images[] = $image;
+
+        return $this;
+    }
+
+    /**
+     * Remove image.
+     *
+     * @param \AppBundle\Entity\Image $image
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeImage(\AppBundle\Entity\Image $image)
+    {
+        return $this->images->removeElement($image);
+    }
+
+    /**
+     * Get images.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getImages()
+    {
+        return $this->images;
     }
 }

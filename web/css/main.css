@@ -57,3 +57,9 @@ body {
 .heightSame{
     height:200px;
 }
+
+.carousel-caption {
+    position: relative;
+    left: auto;
+    right: auto;
+}
