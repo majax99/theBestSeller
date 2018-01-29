@@ -2,7 +2,6 @@
 
 {% block body %}
 
-
     {# Condition pour récupérer le bid final #}
     {% if (bids[1]) is defined %}
         {% if (bids[0].bidAccount > bids[1].bidAccount and bids[0].bidAccount > bids[1].bidAccount + product.bidMinimum ) %}
@@ -54,7 +53,9 @@
             {% endif %}
             <div class="space-ten"></div>
             <div class="btn-ground">
+                {% if date(product.biddingEnd) > date() %}
                 <a href="{{ path('orderproductBid_show', {'id': product.id}) }}"><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-piggy-bank"></span> Bid</button></a>
+                {% endif %}
                 {% if product.immediatePrice is not null %}
                 <a href="{{ path('orderproductBuy_pay', {'id': product.id}) }}"><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-usd"></span> Buy now</button></a>
                 {% endif %}
@@ -83,6 +84,28 @@
             <input type="submit" value="Rate" class = "btn btn-success" />
             {{ form_end(form) }}
         </div>
+        {% endif %}
+    </div>
+    <div class="row">
+
+        {% if (rate.NB > 0) %}
+        <h1>Rates and comments</h1>
+        {% for rates in rateProduct %}
+            <div>
+                {% if (rates.rate < 3) %}
+                <p>Rate : <span class = "label label-danger">{{ rates.rate }}</span> by <strong>{{  rates.rater.username }}</strong></p>
+                {% elseif (rates.rate == 3) %}
+                <p>Rate : <span class = "label label-warning">{{ rates.rate }}</span> by <strong>{{  rates.rater.username }}</strong></p>
+                {% elseif (rates.rate > 3) %}
+                <p>Rate : <span class = "label label-success">{{ rates.rate }}</span> by <strong>{{  rates.rater.username }}</strong></p>
+                {% endif %}
+                <p><em>{{ rates.comment }}</em></p>
+
+            </div>
+
+
+            <hr/>
+        {% endfor %}
         {% endif %}
     </div>
 </div>

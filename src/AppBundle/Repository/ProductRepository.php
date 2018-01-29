@@ -93,6 +93,8 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->createQueryBuilder('p')
             ->leftJoin('p.images', 'i')
             ->addSelect('i')
+            ->leftJoin('p.orders', 'o')
+            ->addSelect('o')
             ->where('p.user = :id')
             ->setParameter('id', $id)
             ->getQuery()
@@ -117,8 +119,28 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->createQueryBuilder('p')
             ->leftJoin('p.images', 'i')
             ->addSelect('i')
+            ->leftJoin('p.orders', 'o')
+            ->addSelect('o')
             ->where('p.category = :id')
             ->setParameter('id', $id)
+            ->andWhere(' o.product is null')
+            ->orderBy('p.biddingEnd', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function ProductsByName($title)
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.images', 'i')
+            ->addSelect('i')
+            ->leftJoin('p.orders', 'o')
+            ->addSelect('o')
+            ->where('p.title LIKE :title')
+            ->setParameter('title', '%'.$title.'%')
+            ->andWhere(' o.product is null')
             ->orderBy('p.biddingEnd', 'ASC')
             ->getQuery()
             ->getResult()

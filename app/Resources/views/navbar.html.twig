@@ -18,9 +18,9 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% if is_granted('ROLE_USER') %}
 
-                    <li><a href="/seller">Users</a></li>
-                    <li><a href="#">Products</a></li>
+                    <li><a href="/seller">Seller place</a></li>
                     <li><a href="/profile">Profile</a></li>
+                        <li><a href="/profile">Search in detail</a></li>
                     <li>
                         <a class="btn btn-default btn-outline btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse3" aria-expanded="false" aria-controls="nav-collapse3">Search</a>
                     </li>
@@ -31,12 +31,13 @@
                     {%  endif %}
                 </ul>
                 <div class="collapse nav navbar-nav nav-collapse slide-down" id="nav-collapse3">
-                    <form class="navbar-form navbar-right" role="search">
+                    <form class="navbar-form navbar-right" role="search" method="post" action="{{  path('searchBar') }}">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search" />
+                            <input type="text" class="form-control" placeholder="Search" name="search"/>
                         </div>
                         <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                     </form>
+
                 </div>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container -->

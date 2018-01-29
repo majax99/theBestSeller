@@ -4,11 +4,15 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\Category;
 
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class DefaultController extends Controller
 {
@@ -49,4 +53,34 @@ class DefaultController extends Controller
 
         // ... do something, like pass the $product object into a template
     }
+
+
+    /**
+     * @Route("/searchBar", name="searchBar")
+     * @Method({"GET", "POST"})
+     */
+    public function searchBarAction()
+    {
+        return $this->redirectToRoute('searchBarName', array('product' => $_POST['search']));
+    }
+
+    /**
+     * @Route("/searchBar/{product}", name="searchBarName")
+     * @Method({"GET", "POST"})
+     */
+    public function searchBarNameAction($product)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $products = $em->getRepository('AppBundle:Product')->ProductsByName($product);
+
+        $categories= $em->getRepository('AppBundle:Category')->countProductCategory();
+
+        return $this->render('default/searchBarName.html.twig', array(
+            'products' => $products,
+            'categories' => $categories,
+            'search' => $product,
+        ));
+    }
+
 }

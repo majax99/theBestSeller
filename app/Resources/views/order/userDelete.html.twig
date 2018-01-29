@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="span10 offset1">
+
+        <div class="row">
+
+            <h3>Delete my account</h3>
+
+        </div>
+
+        <span>Do you really want to delete your account ?</span>
+
+            <div class= "row"><br/>
+
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
+

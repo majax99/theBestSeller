@@ -43,6 +43,12 @@ class productRating
 
 
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $rater;
+
+    /**
      * Get id.
      *
      * @return int
@@ -53,7 +59,7 @@ class productRating
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="rates")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $product;
@@ -104,5 +110,29 @@ class productRating
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * Set product.
+     *
+     * @param \AppBundle\Entity\Product $product
+     *
+     * @return productRating
+     */
+    public function setProduct(\AppBundle\Entity\Product $product)
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * Get product.
+     *
+     * @return \AppBundle\Entity\Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
     }
 }

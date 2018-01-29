@@ -43,6 +43,12 @@ class productRating
 
 
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $rater;
+
+    /**
      * Get id.
      *
      * @return int
@@ -128,5 +134,29 @@ class productRating
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * Set rater.
+     *
+     * @param \AppBundle\Entity\User|null $rater
+     *
+     * @return productRating
+     */
+    public function setRater(\AppBundle\Entity\User $rater = null)
+    {
+        $this->rater = $rater;
+
+        return $this;
+    }
+
+    /**
+     * Get rater.
+     *
+     * @return \AppBundle\Entity\User|null
+     */
+    public function getRater()
+    {
+        return $this->rater;
     }
 }

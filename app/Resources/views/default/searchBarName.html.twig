@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container-fluid">
+        <div class="row" >
+            <div class="col-md-2 col-sm-4 sidebar1" >
+                <div class="logo">
+                    <img src="{{ asset('images/logo.png') | imagine_filter('my_thumb') }}" class="img-responsive center-block" alt="Logo" >
+                </div>
+                <br>
+                <div class="left-navigation">
+                    <ul class="list">
+                        <h5><strong>CATEGORIES</strong></h5>
+
+                        {% for category in categories %}
+                            <li><a href="/category/{{ category.id }}/product" style="color: #FFFFFF"> {{ category.name }} </a><span class="badge badge-warning">{{ category.products | length }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="row" >
+                    <div class="col-md-12">
+                        {% if (products[0].category.name is defined) %}
+                            <h1 class = "text-center">Products for the search  <strong>{{ search}}</strong></h1>
+                        {% else %}
+                            <h1 class = "text-center">No products for this category </h1>
+                        {% endif %}
+                        {% if products is defined %}
+                            {% for product in products %}
+                                <div class="col-md-4 "><br><br><br>
+                                    <div class="thumbnail ">
+                                        {% set i = 0 %}
+                                        {% for image in product.images %}
+                                            {% if i == 0 %}
+                                                <img src="{{ vich_uploader_asset(image, 'imageFile')| imagine_filter('my_thumb') }}" alt="{{ image.name }}" class="img-responsive" >
+                                            {% endif %}
+                                            {% set i = i+1 %}
+                                        {% endfor %}
+                                        <div class="caption">
+                                            <h4 class="pull-right">start to <span class = "label label-default">${{ product.minimumPrice }}</span></h4>
+                                            <h4>{{ product.title }}</h4>
+                                        </div>
+                                        <div class="space-ten"></div>
+                                        <div class="btn-ground text-center">
+                                            <a href="{{ path('ordershow', {'id': product.id}) }}"><button type="button" class="btn btn-primary" >more details</button></a>
+                                        </div>
+                                        <div class="space-ten"></div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

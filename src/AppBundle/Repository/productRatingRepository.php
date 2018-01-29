@@ -21,4 +21,15 @@ class productRatingRepository extends \Doctrine\ORM\EntityRepository
             ->getResult()
             ;
     }
+
+    public function MyProductRate($id)
+    {
+        return $this
+            ->createQueryBuilder('r')
+            ->where('r.product = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

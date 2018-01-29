@@ -116,6 +116,7 @@ class OrderController extends Controller
         $productRating = new Productrating();
 
         $productRating->setProduct($product);
+        $productRating->setRater($this->getUser());
         $form = $this->createForm('AppBundle\Form\productRatingType', $productRating);
         $form->handleRequest($request);
 
@@ -137,11 +138,13 @@ class OrderController extends Controller
         $products = $em->getRepository('AppBundle:Product')->myFindOne($product->getId());
         $bids = $em->getRepository('AppBundle:Bid')->myFindBid($product->getId());
         $rate = $em->getRepository('AppBundle:productRating')->countRateProduct($product->getId());
+        $rateProduct = $em->getRepository('AppBundle:productRating')->MyProductRate($product->getId());
         return $this->render('order/show.html.twig', array(
             'product' => $products[0],
             'form' => $form->createView(),
             'bids' => $bids,
-            'rate' => $rate[0]
+            'rate' => $rate[0],
+            'rateProduct' => $rateProduct,
         ));
     }
 
@@ -175,6 +178,38 @@ class OrderController extends Controller
 
         return $this->render('order/ordersUser.html.twig', array(
             'orders' => $orders,
+        ));
+
+    }
+
+
+    /**
+     * Delete a user
+     *
+     * @Route("/user/{id}/delete", name="delete_user", requirements={"page"="\d+"})
+     * @Method({"GET", "POST"})
+     */
+    public function DeleteUserAction(Request $request, User $user)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm('AppBundle\Form\UserDeleteType', $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            echo "toto";
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($user);
+            $em->flush();
+
+            return $this->redirectToRoute('homepage');
+        }
+
+        $user = $em->getRepository('AppBundle:User')->find($user->getId());
+
+        return $this->render('order/userDelete.html.twig', array(
+            'user' => $user,
+            'form' => $form->createView(),
         ));
 
     }
