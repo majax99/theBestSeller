@@ -1,10 +1,31 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
+
+    <div class="container-fluid">
         <div class="row" >
+            <div class="col-md-2 col-sm-4 sidebar1" >
+                <div class="logo">
+                    <img src="{{ asset('images/logo.png') | imagine_filter('my_thumb') }}" class="img-responsive center-block" alt="Logo" >
+                </div>
+                <br>
+                <div class="left-navigation">
+                    <ul class="list">
+                        <h5><strong>CATEGORIES</strong></h5>
+                        {% for category in categories %}
+                            <li><a href="/category/{{ category.id }}/product" style="color: #FFFFFF"> {{ category.name }} </a><span class="badge badge-warning">{{ category.products | length }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h1 class="alert alert-default text-center">Welcome {% if (app.user.username is defined) %}{{ app.user.username }} {% endif %}  on Ebeille<br><i>Bee or not to bee, that is the question</i></h1>
+            <div class="row" >
+                <div class="col-md-12">
             {% for product in products %}
-            <div class="col-md-4 ">
+                {% if product.orders is null %}
+                {# si les produits ne sont pas déjà vendus #}
+            <div class="col-md-4 "><br><br><br>
                 <div class="thumbnail ">
                     {% set i = 0 %}
                     {% for image in product.images %}
@@ -14,8 +35,8 @@
                         {% set i = i+1 %}
                     {% endfor %}
                     <div class="caption">
-                        <h4 class="pull-right">${{ product.minimumPrice }}</h4>
-                        <h4><a href="#">{{ product.title }}</a></h4>
+                        <h4 class="pull-right">start to <span class = "label label-default">${{ product.minimumPrice }}</span></h4>
+                        <h4>{{ product.title }}</h4>
                     </div>
                     <div class="space-ten"></div>
                     <div class="btn-ground text-center">
@@ -24,7 +45,11 @@
                     <div class="space-ten"></div>
                 </div>
             </div>
+                {% endif %}
             {% endfor %}
+                </div>
+            </div>
+            </div>
         </div>
     </div>
 

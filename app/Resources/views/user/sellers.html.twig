@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+        <div class = "row" style = "margin-top:50px;">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">All users </h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="tableProno" class="table table-condensed">
+                                    {% if users[0] is defined %}
+                                    <thead>
+                                    <th class= "text-center"  >Username </th>
+                                    <th class= "text-center"  >Email </th>
+                                    <th class= "text-center"  >Subscription date </th>
+                                    <th class= "text-center" > Number of products </th>
+                                    <th class= "text-center" > Number of sells </th>
+                                    <th class= "text-center" > Rate </th>
+                                    <th class= "text-center" > Number of rater </th>
+                                    <th class= "text-center" > Visits </th>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for user in users %}
+                                    <tr class='clickable-row' data-href="{{path('seller_details' , {'id': user.id})}}">
+
+                                        <td class = "text-center" style="vertical-align:middle;"> {{ user.username }}</td>
+                                        <td class = "text-center" style="vertical-align:middle;"> {{ user.email }}</td>
+                                        <td class = "text-center" style="vertical-align:middle;"> {{ user.created | date('d/m/Y H:i')}}</td>
+                                        <td class = "text-center" style="vertical-align:middle;"> {{ user.products | length }}</td>
+                                        <td class = "text-center" style="vertical-align:middle;">{{ user.orders | length }} </td>
+                                        {% if  (user.userRates| length) > 0%}
+                                            {% set somme = 0 %}
+                                            {% for userRates in user.userRates %}
+                                                {% set somme = somme + userRates.rate %}
+                                        {% endfor %}
+                                            {% set average = somme/(user.userRates| length) %}
+
+                                            <td class = "text-center" style="vertical-align:middle;"> {{ average | number_format(2, '.', ',') }}</td>
+                                        {%  else %}
+                                            <td class = "text-center" style="vertical-align:middle;"> no rate</td>
+                                        {%  endif %}
+                                        <td class = "text-center" style="vertical-align:middle;"> {{ user.userRates| length }}</td>
+                                        <td class = "text-center" style="vertical-align:middle;"> {{ user.userVisits }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% else %}
+                                        <h2 class = "text-center"> You don't have any products </h2>
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script> jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+        $(".clickable-row").hover(function() {
+            $(this).css( 'cursor', 'pointer' )
+                .toggleClass("bg-info")
+                .siblings(".selected")
+                .removeClass("selected");
+        });
+    });</script>{% endblock %}

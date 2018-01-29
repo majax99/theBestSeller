@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * UserRating
@@ -23,7 +24,7 @@ class UserRating
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="userRates")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
     private $userRate;
@@ -34,11 +35,20 @@ class UserRating
      */
     private $rater;
 
+    /**
+     * @ORM\Column(name = "product_id",type="integer", unique=true)
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Product", cascade={"persist"})
+     */
+    private $product;
 
     /**
      * @var int
      *
      * @ORM\Column(name="rate", type="integer")
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 5,
+     * )
      */
     private $rate;
 
@@ -123,5 +133,29 @@ class UserRating
     public function getRater()
     {
         return $this->rater;
+    }
+
+    /**
+     * Set product.
+     *
+     * @param int $product
+     *
+     * @return UserRating
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * Get product.
+     *
+     * @return int
+     */
+    public function getProduct()
+    {
+        return $this->product;
     }
 }

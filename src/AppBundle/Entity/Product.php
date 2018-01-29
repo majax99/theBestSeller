@@ -16,9 +16,16 @@ class Product
 {
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Image", mappedBy="product")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Image", mappedBy="product", cascade={"persist", "remove"})
      */
-    private $images;
+    protected $images;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\productRating", mappedBy="product")
+     */
+    protected $rates;
+
+
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bid", mappedBy="product")
@@ -26,16 +33,23 @@ class Product
     private $bids;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category", inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
      * @ORM\JoinColumn(nullable=true)
      */
     private $user;
+
+
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Orders", mappedBy="product", cascade={"persist"})
+     */
+    private $orders;
 
 
 
@@ -107,7 +121,7 @@ class Product
      *
      * @ORM\Column(name="productVisits", type="integer", nullable=true)
      */
-    private $productVisits;
+    private $productVisits = 0;
 
 
     /**
@@ -445,6 +459,7 @@ class Product
      */
     public function addImage(\AppBundle\Entity\Image $image)
     {
+        $image->setProduct($this);
         $this->images[] = $image;
 
         return $this;
@@ -506,5 +521,65 @@ class Product
     public function getBids()
     {
         return $this->bids;
+    }
+
+    /**
+     * Add rate.
+     *
+     * @param \AppBundle\Entity\productRating $rate
+     *
+     * @return product
+     */
+    public function addRate(\AppBundle\Entity\productRating $rate)
+    {
+        $this->rates[] = $rate;
+
+        return $this;
+    }
+
+    /**
+     * Remove rate.
+     *
+     * @param \AppBundle\Entity\productRating $rate
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeRate(\AppBundle\Entity\productRating $rate)
+    {
+        return $this->rates->removeElement($rate);
+    }
+
+    /**
+     * Get rates.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRates()
+    {
+        return $this->rates;
+    }
+
+    /**
+     * Set orders.
+     *
+     * @param \AppBundle\Entity\Orders|null $orders
+     *
+     * @return product
+     */
+    public function setOrders(\AppBundle\Entity\Orders $orders = null)
+    {
+        $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * Get orders.
+     *
+     * @return \AppBundle\Entity\Orders|null
+     */
+    public function getOrders()
+    {
+        return $this->orders;
     }
 }

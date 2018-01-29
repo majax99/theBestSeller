@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * UserRating
@@ -24,7 +25,7 @@ class UserRating
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
     private $userRate;
 
@@ -34,11 +35,21 @@ class UserRating
      */
     private $rater;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="product_id", type="integer")
+     */
+    private $product;   
 
     /**
      * @var int
      *
      * @ORM\Column(name="rate", type="integer")
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 5,
+     * )
      */
     private $rate;
 
@@ -75,5 +86,53 @@ class UserRating
     public function getRate()
     {
         return $this->rate;
+    }
+
+    /**
+     * Set userRate.
+     *
+     * @param \AppBundle\Entity\User $userRate
+     *
+     * @return UserRating
+     */
+    public function setUserRate(\AppBundle\Entity\User $userRate)
+    {
+        $this->userRate = $userRate;
+
+        return $this;
+    }
+
+    /**
+     * Get userRate.
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUserRate()
+    {
+        return $this->userRate;
+    }
+
+    /**
+     * Set rater.
+     *
+     * @param \AppBundle\Entity\User $rater
+     *
+     * @return UserRating
+     */
+    public function setRater(\AppBundle\Entity\User $rater)
+    {
+        $this->rater = $rater;
+
+        return $this;
+    }
+
+    /**
+     * Get rater.
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getRater()
+    {
+        return $this->rater;
     }
 }

@@ -10,4 +10,26 @@ namespace AppBundle\Repository;
  */
 class OrdersRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function MyFindOne($id)
+    {
+        return $this
+            ->createQueryBuilder('o')
+            ->where('o.product = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function OrdersByUsers($id)
+    {
+        return $this
+            ->createQueryBuilder('o')
+            ->leftJoin('o.product', 'p')
+            ->addSelect('p')
+            ->where('o.buyer = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

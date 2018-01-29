@@ -16,6 +16,8 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->createQueryBuilder('p')
             ->leftJoin('p.images', 'i')
             ->addSelect('i')
+            ->leftJoin('p.orders', 'o')
+            ->addSelect('o')
             ->getQuery()
             ->getResult()
             ;
@@ -27,6 +29,8 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->createQueryBuilder('p')
             ->leftJoin('p.images', 'i')
             ->addSelect('i')
+            ->leftJoin('p.bids', 'b')
+            ->addSelect('b')
             ->where('p.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
@@ -63,5 +67,67 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->getResult()
             ;
     }
+
+
+
+    public function myFindBidMaxFinal($id)
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.bids', 'b')
+            ->addSelect('b')
+            ->where('p.id = :id')
+            ->setParameter('id', $id)
+            ->orderBy('b.bidAccount', 'DESC','b.created', 'ASC')
+            //->orderBy('b.created', 'ASC')
+            ->setFirstResult( 0 )
+            ->setMaxResults( 1 )
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function myProducts($id)
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.images', 'i')
+            ->addSelect('i')
+            ->where('p.user = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function myOrders()
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.orders', 'o')
+            ->addSelect('o')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function ProductsByCategory($id)
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.images', 'i')
+            ->addSelect('i')
+            ->where('p.category = :id')
+            ->setParameter('id', $id)
+            ->orderBy('p.biddingEnd', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
+
+
+
 
 }

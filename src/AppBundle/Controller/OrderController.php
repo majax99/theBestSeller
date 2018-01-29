@@ -2,13 +2,16 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Order;
+use AppBundle\Entity\Orders;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Bid;
+use AppBundle\Entity\User;
+use AppBundle\Entity\productRating;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 /**
  * Order controller.
@@ -28,7 +31,6 @@ class OrderController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $bid_request = $em->getRepository('AppBundle:Product')->myFindBidMax($product->getId());
-        //$products = $em->getRepository('AppBundle:Product')->myFindOneBids($product->getId());
 
 
         $bid = new Bid();
@@ -37,14 +39,17 @@ class OrderController extends Controller
 
         $form = $this->createForm('AppBundle\Form\BidType', $bid);
         $form->handleRequest($request);
+        $bidAmount = $bid->getBidAccount();
+        $minBid = $request->request->get('minBid');
+        if ($form->isSubmitted() && $form->isValid() && $minBid < $bidAmount) {
 
-        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($bid);
             $em->flush();
 
             return $this->redirectToRoute('ordershow', array('id' => $product->getId()));
         }
+
 
         return $this->render('bid/new.html.twig', array(
             /*'products' => $products,*/
@@ -56,51 +61,87 @@ class OrderController extends Controller
     /**
      * Finds and displays a bid entity for a product.
      *
-     * @Route("/{id}/buy/new", name="productBuy_pay")
+     * @Route("/{id}/buy", name="productBuy_pay")
      * @Method({"GET", "POST"})
      */
-    public function immediateBuyAction(Request $request, Product $product)
+    public function immediateOrderAction(Request $request, Product $product)
     {
-        $em = $this->getDoctrine()->getManager();
-        $bid_request = $em->getRepository('AppBundle:Product')->myFindBidMax($product->getId());
-        //$products = $em->getRepository('AppBundle:Product')->myFindOneBids($product->getId());
-
-
-        $bid = new Bid();
-        $bid->setProduct($product);
-        $bid->setBuyer($this->getUser());
-
-        $form = $this->createForm('AppBundle\Form\BidType', $bid);
+        $form = $this->createFormBuilder()
+            ->add('Pay the product', SubmitType::class, array('attr' => ['class' => 'btn btn-success']))
+            ->getForm();
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        $em = $this->getDoctrine()->getManager();
+
+        $order = new Orders();
+        $order->setProduct($product);
+        $order->setBuyer($this->getUser());
+        $order->setSeller($product->getuser());
+        $order->setPrice($product->getimmediatePrice());
+        $order->setImmediateSell(true);
+        $order->setCategory($product->getCategory());
+
+
+        $products = $em->getRepository('AppBundle:Product')->myFindOne($product->getId());
+
+        if ($form->isSubmitted()) {
+
             $em = $this->getDoctrine()->getManager();
-            $em->persist($bid);
+            $em->persist($order);
             $em->flush();
 
-            return $this->redirectToRoute('ordershow', array('id' => $product->getId()));
+            return $this->redirectToRoute('userRate', array('user' => $product->getUser()->getid(), 'product' => $product->getid()));
         }
 
-        return $this->render('bid/new.html.twig', array(
-            /*'products' => $products,*/
-            'products' => $bid_request,
+
+
+        return $this->render('order/immediateOrder.html.twig', array(
+            'product' => $products[0],
             'form' => $form->createView(),
         ));
     }
+
 
 
     /**
      * Finds and displays an order entity.
      *
      * @Route("/{id}", name="show", requirements={"page"="\d+"})
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
     public function showAction(Request $request, Product $product)
     {
+
+
+        $productRating = new Productrating();
+
+        $productRating->setProduct($product);
+        $form = $this->createForm('AppBundle\Form\productRatingType', $productRating);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($productRating);
+            $em->flush();
+
+            return $this->redirectToRoute('ordershow', array('id' => $product->getId()));
+        }
+
+
         $em = $this->getDoctrine()->getManager();
+        $views = $product->getProductVisits();
+        $product->setProductVisits($views + 1);
+        $em->persist($product);
+        $em->flush();
+
         $products = $em->getRepository('AppBundle:Product')->myFindOne($product->getId());
+        $bids = $em->getRepository('AppBundle:Bid')->myFindBid($product->getId());
+        $rate = $em->getRepository('AppBundle:productRating')->countRateProduct($product->getId());
         return $this->render('order/show.html.twig', array(
             'product' => $products[0],
+            'form' => $form->createView(),
+            'bids' => $bids,
+            'rate' => $rate[0]
         ));
     }
 
@@ -118,6 +159,24 @@ class OrderController extends Controller
             ->setMethod('DELETE')
             ->getForm()
             ;
+    }
+
+    /**
+     * Finds and displays an order entity.
+     *
+     * @Route("/user/{id}", name="show_myOrders", requirements={"page"="\d+"})
+     * @Method({"GET"})
+     */
+    public function MyOrdersAction(Request $request, User $user)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $orders = $em->getRepository('AppBundle:Orders')->OrdersByUsers($user->getId());
+
+        return $this->render('order/ordersUser.html.twig', array(
+            'orders' => $orders,
+        ));
+
     }
 
 }

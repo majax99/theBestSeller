@@ -23,6 +23,30 @@ class Orders
     private $id;
 
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $buyer;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="orders")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $seller;
+
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Product", inversedBy="orders")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+     */
+    private $product;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Category", cascade={"persist"})
+     */
+    private $category;
+
+    /**
      * @var \DateTime $created
      *
      * @Gedmo\Timestampable(on="create")
@@ -45,19 +69,6 @@ class Orders
      */
     private $price;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="rate", type="integer")
-     */
-    private $rate;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="comment", type="text")
-     */
-    private $comment;
 
     /**
      * @var bool
@@ -99,54 +110,6 @@ class Orders
     public function getPrice()
     {
         return $this->price;
-    }
-
-    /**
-     * Set rate.
-     *
-     * @param int $rate
-     *
-     * @return Orders
-     */
-    public function setRate($rate)
-    {
-        $this->rate = $rate;
-
-        return $this;
-    }
-
-    /**
-     * Get rate.
-     *
-     * @return int
-     */
-    public function getRate()
-    {
-        return $this->rate;
-    }
-
-    /**
-     * Set comment.
-     *
-     * @param string $comment
-     *
-     * @return Orders
-     */
-    public function setComment($comment)
-    {
-        $this->comment = $comment;
-
-        return $this;
-    }
-
-    /**
-     * Get comment.
-     *
-     * @return string
-     */
-    public function getComment()
-    {
-        return $this->comment;
     }
 
     /**
@@ -219,5 +182,101 @@ class Orders
     public function getUpdated()
     {
         return $this->updated;
+    }
+
+    /**
+     * Set buyer.
+     *
+     * @param \AppBundle\Entity\User $buyer
+     *
+     * @return Orders
+     */
+    public function setBuyer(\AppBundle\Entity\User $buyer)
+    {
+        $this->buyer = $buyer;
+
+        return $this;
+    }
+
+    /**
+     * Get buyer.
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getBuyer()
+    {
+        return $this->buyer;
+    }
+
+    /**
+     * Set seller.
+     *
+     * @param \AppBundle\Entity\User $seller
+     *
+     * @return Orders
+     */
+    public function setSeller(\AppBundle\Entity\User $seller)
+    {
+        $this->seller = $seller;
+
+        return $this;
+    }
+
+    /**
+     * Get seller.
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getSeller()
+    {
+        return $this->seller;
+    }
+
+    /**
+     * Set product.
+     *
+     * @param \AppBundle\Entity\Product|null $product
+     *
+     * @return Orders
+     */
+    public function setProduct(\AppBundle\Entity\Product $product = null)
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * Get product.
+     *
+     * @return \AppBundle\Entity\Product|null
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * Set category.
+     *
+     * @param \AppBundle\Entity\Category|null $category
+     *
+     * @return Orders
+     */
+    public function setCategory(\AppBundle\Entity\Category $category = null)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category.
+     *
+     * @return \AppBundle\Entity\Category|null
+     */
+    public function getCategory()
+    {
+        return $this->category;
     }
 }

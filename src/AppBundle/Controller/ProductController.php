@@ -4,7 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Bid;
-use AppBundle\Entity\Order;
+use AppBundle\Entity\User;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -43,6 +44,7 @@ class ProductController extends Controller
     public function newAction(Request $request)
     {
         $product = new Product();
+        $product->setUser($this->getUser());
 
         $form = $this->createForm('AppBundle\Form\ProductType', $product);
         $form->handleRequest($request);
@@ -119,11 +121,10 @@ class ProductController extends Controller
         $deleteForm = $this->createDeleteForm($product);
         $editForm = $this->createForm('AppBundle\Form\ProductType', $product);
         $editForm->handleRequest($request);
-
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('product_edit', array('id' => $product->getId()));
+            return $this->redirectToRoute('MyProduct_show', array('id' => $this->getUser()->getId()));
         }
 
         return $this->render('product/edit.html.twig', array(
@@ -168,4 +169,23 @@ class ProductController extends Controller
             ->getForm()
         ;
     }
+
+    /**
+     * Finds and displays a product entity.
+     *
+     * @Route("/{id}/profile", name="MyProduct_show")
+     * @Method("GET")
+     */
+    public function showMyProductsAction(Request $request, User $user)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $products = $em->getRepository('AppBundle:Product')->myProducts($user->getId());
+
+        return $this->render('product/productUser.html.twig', array(
+            'products' => $products,
+        ));
+    }
+
+
+
 }

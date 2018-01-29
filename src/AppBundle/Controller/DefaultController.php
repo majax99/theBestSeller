@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Order;
 
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,9 +20,13 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $products = $em->getRepository('AppBundle:Product')->myFindAll();
+
+        $categories= $em->getRepository('AppBundle:Category')->countProductCategory();
+
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', array(
             'products' => $products,
+            'categories' => $categories,
         ));
     }
 

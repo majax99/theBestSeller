@@ -1,6 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+
+    {# Condition pour récupérer le bid final #}
+    {% if (bids[1]) is defined %}
+        {% if (bids[0].bidAccount > bids[1].bidAccount and bids[0].bidAccount > bids[1].bidAccount + product.bidMinimum ) %}
+            {% set bid = bids[1].bidAccount + product.bidMinimum %}
+        {% elseif (bids[0].bidAccount > bids[1].bidAccount and bids[0].bidAccount <= bids[1].bidAccount + product.bidMinimum ) %}
+            {% set bid = bids[0].bidAccount %}
+        {% elseif (bids[0].bidAccount == bids[1].bidAccount  ) %}
+            {% set bid = bids[0].bidAccount %}
+        {% endif %}
+    {% else %}
+        {% if (bids[0] is defined) %}
+            {% set bid = product.minimumPrice + product.bidMinimum %}
+        {% else %}
+            {% set bid = product.minimumPrice %}
+        {% endif %}
+    {% endif %}
+
 <div class = "container">
     <div class="row">
         <div class=" col-md-4 product_img">
@@ -25,19 +44,46 @@
 
 
         </div>
-        <div class="col-md-offset-1 col-md-6 product_content">
+        <div class=" col-md-4 product_content">
             <h2>{{ product.title }}</h2>
             <p>{{ product.description }}</p>
-            <h3 class="cost" >Actual bid : <span class="glyphicon glyphicon-usd"></span> {{ product.minimumPrice }} <small class="pre-cost"><span class="glyphicon glyphicon-usd"></span> {{ product.minimumPrice }}</small></h3>
-            <h4> End of bid : <span id="countdown">  </span></h4>
+            <h3 class="cost" >Actual bid : <span class="glyphicon glyphicon-usd"></span> {{ bid }} <small class="pre-cost"><span class="glyphicon glyphicon-usd"></span> {{ product.minimumPrice }}</small></h3>
+            <h4> End of bid : <span id="countdown" class = "label label-warning">  </span></h4>
+            {% if product.immediatePrice is not null %}
             <h3 class="cost" >Immediate price : <span class="glyphicon glyphicon-usd"></span> {{ product.immediatePrice }} </h3>
+            {% endif %}
             <div class="space-ten"></div>
             <div class="btn-ground">
                 <a href="{{ path('orderproductBid_show', {'id': product.id}) }}"><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-piggy-bank"></span> Bid</button></a>
-                <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-usd"></span> Immediate order</button>
+                {% if product.immediatePrice is not null %}
+                <a href="{{ path('orderproductBuy_pay', {'id': product.id}) }}"><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-usd"></span> Buy now</button></a>
+                {% endif %}
             </div>
             <span id="EndBid">{{ product.biddingEnd|date('Y-m-d H:i:s') }}</span>
+            <div class="detail-socials">
+                <div class="social-sharing" >
+                    <a target="_blank"  class="share-facebook" title="Share"></a>
+                    <a target="_blank"  class="share-twitter" title="Tweet"></a>
+                    <a target="_blank"  class="share-pinterest" title="Pin it"></a>
+                </div>
+            </div><br>
+            {% if (rate.NB > 0) %}
+            <div class="btn-ground">
+                <h4><strong>rate : </strong><span class = "label label-warning">{{ rate.AVG | number_format(2, '.', ',')}} <i class = "glyphicon glyphicon-star"></i></span> for {{ rate.NB }} rater(s) </h4>
+            </div>
+            {% endif %}
+            <div class="btn-ground">
+                Number of views : {{ product.productVisits }}
+            </div>
         </div>
+        {% if (app.user.id != product.user.id) %}
+        <div class = "col-md-4 pull-left">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <input type="submit" value="Rate" class = "btn btn-success" />
+            {{ form_end(form) }}
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -70,7 +116,11 @@
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             // Display the result in the element with id="demo"
-            document.getElementById("countdown").innerHTML = days + " Days " + hours + "h "
+            if (days == 1)
+                var jour = " day ";
+            else
+                var jour = " days ";
+            document.getElementById("countdown").innerHTML = days + jour + hours + "h "
                 + minutes + "m " + seconds + "s ";
 
             // If the count down is finished, write some text

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class = "container">
+<div class="row">
+    <h2>Rate the user</h2>
+    {%  if (user.id == userRating.userRate.id) %}
+    <h3>You can't rate yourself</h3>
+    {% else %}
+    <p>Congratulations, you have buy a beautiful product!</p>
+    <p>We need you to verify if all it's ok, can you rate the seller please ?</p>
+    <div class = "col-md-4">
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+    </div>
+    {%  endif %}
+</div>
+    </div>
+
+
+{% endblock %}

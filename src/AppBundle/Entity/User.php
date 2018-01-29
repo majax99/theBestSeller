@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -21,6 +22,23 @@ class User extends \FOS\UserBundle\Model\User
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product", mappedBy="user", cascade={"remove"})
+     */
+    protected $products;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Orders", mappedBy="seller", cascade={"persist"})
+     */
+    protected $orders;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\UserRating", mappedBy="userRate", cascade={"persist"})
+     */
+    protected $userRates;
+
 
 
     /**
@@ -68,7 +86,7 @@ class User extends \FOS\UserBundle\Model\User
      *
      * @ORM\Column(name="userVisits", type="integer", nullable=true)
      */
-    private $userVisits;
+    private $userVisits = 0;
 
 
     /**
@@ -289,5 +307,114 @@ class User extends \FOS\UserBundle\Model\User
     public function getUserVisits()
     {
         return $this->userVisits;
+    }
+
+    /**
+     * Add product.
+     *
+     * @param \AppBundle\Entity\User $product
+     *
+     * @return user
+     */
+    public function addProduct(\AppBundle\Entity\User $product)
+    {
+        $this->products[] = $product;
+
+        return $this;
+    }
+
+    /**
+     * Remove product.
+     *
+     * @param \AppBundle\Entity\User $product
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeProduct(\AppBundle\Entity\User $product)
+    {
+        return $this->products->removeElement($product);
+    }
+
+    /**
+     * Get products.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    /**
+     * Add order.
+     *
+     * @param \AppBundle\Entity\Orders $order
+     *
+     * @return User
+     */
+    public function addOrder(\AppBundle\Entity\Orders $order)
+    {
+        $this->orders[] = $order;
+
+        return $this;
+    }
+
+    /**
+     * Remove order.
+     *
+     * @param \AppBundle\Entity\Orders $order
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeOrder(\AppBundle\Entity\Orders $order)
+    {
+        return $this->orders->removeElement($order);
+    }
+
+    /**
+     * Get orders.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getOrders()
+    {
+        return $this->orders;
+    }
+
+
+    /**
+     * Add userRate.
+     *
+     * @param \AppBundle\Entity\UserRating $userRate
+     *
+     * @return User
+     */
+    public function addUserRate(\AppBundle\Entity\UserRating $userRate)
+    {
+        $this->userRates[] = $userRate;
+
+        return $this;
+    }
+
+    /**
+     * Remove userRate.
+     *
+     * @param \AppBundle\Entity\UserRating $userRate
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeUserRate(\AppBundle\Entity\UserRating $userRate)
+    {
+        return $this->userRates->removeElement($userRate);
+    }
+
+    /**
+     * Get userRates.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserRates()
+    {
+        return $this->userRates;
     }
 }

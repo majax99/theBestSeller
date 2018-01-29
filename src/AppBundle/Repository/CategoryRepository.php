@@ -10,8 +10,31 @@ namespace AppBundle\Repository;
  */
 class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function countProductCategory()
+    {
+        return $this
+            ->createQueryBuilder('c')
+            ->select('c')
+            ->leftJoin('c.products', 'p')
+            ->addSelect('p')
+            ->orderBy('c.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 
-
-
-
+    public function productByCategory($id)
+    {
+        return $this
+            ->createQueryBuilder('c')
+            ->select('c')
+            ->leftJoin('c.products', 'p')
+            ->addSelect('p')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->orderBy('p.biddingEnd', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

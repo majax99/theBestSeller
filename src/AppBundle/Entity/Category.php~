@@ -15,11 +15,15 @@ use Doctrine\ORM\Mapping as ORM;
 class Category
 {
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product", mappedBy="Category", cascade={"remove"})
+     */
+    private $products;
 
     /**
      * @Gedmo\TreeParent
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
-     * @ORM\JoinColumn(referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     * @ORM\JoinColumn(referencedColumnName="id", onDelete="CASCADE", nullable=true )
      */
     private $parent;
 
@@ -47,7 +51,7 @@ class Category
     /**
      * @var int
      *
-     * @ORM\Column(name="categoryVisits", type="integer")
+     * @ORM\Column(name="categoryVisits", type="integer", nullable=true)
      */
     private $categoryVisits;    
 
@@ -158,5 +162,29 @@ class Category
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * Set categoryVisits.
+     *
+     * @param int $categoryVisits
+     *
+     * @return Category
+     */
+    public function setCategoryVisits($categoryVisits)
+    {
+        $this->categoryVisits = $categoryVisits;
+
+        return $this;
+    }
+
+    /**
+     * Get categoryVisits.
+     *
+     * @return int
+     */
+    public function getCategoryVisits()
+    {
+        return $this->categoryVisits;
     }
 }
